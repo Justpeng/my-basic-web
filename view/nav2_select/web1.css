@@ -1,0 +1,22 @@
+*{padding: 0;margin: 0;}
+li{list-style: none;}
+a{text-decoration: none;}
+.nav{width:100%;height: 40px;background: #222;margin-top:40px;}
+.list{width: 1000px;height: 40px;margin:0 auto;}
+
+.list li {float: left;position: relative;}
+/*li下唯一子元素a*/
+.list li>a{padding: 0 30px;line-height: 40px;display: block;color: #aaa;font-size: 16px;}
+
+.list li:hover >a{background: #333;color:#fff;}
+/*a与down 分离，所以hover应该作用于父元素li*/
+/*.list li>a:hover{background: #333;color:#fff;}*/
+
+/*鼠标滑过显示 down*/
+.list li:hover .down{display: block;}
+
+/*使用绝对定位与导航条分离,否则会影响nav宽度，其父为li*/
+.list li .down{width: 150px;background: #333;position:absolute; top: 40px;left: 0; display: none;}
+.list li .down a{display: block;line-height: 30px;color: #aaa;font-size: 14px;padding-left: 30px; }
+.list li .down a:hover{color:#fff;}
+
