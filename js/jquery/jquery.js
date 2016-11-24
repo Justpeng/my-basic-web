@@ -6710,7 +6710,7 @@ jQuery.fn.extend({
 			// Animate to the value specified
 			.end().animate({ opacity: to }, speed, easing, callback );
 	},
-	animate: function( prop, speed, easing, callback ) {
+		animate: function( prop, speed, easing, callback ) {
 		var empty = jQuery.isEmptyObject( prop ),
 			optall = jQuery.speed( speed, easing, callback ),
 			doAnimation = function() {

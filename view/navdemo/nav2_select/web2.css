@@ -13,7 +13,7 @@ a{text-decoration: none;}
 /*.list li>a:hover{background: #333;color:#fff;}*/
 
 /*鼠标滑过显示 down*/
-.list li:hover .down{display: block;}
+/*.list li:hover .down{display: block;}*/
 
 /*使用绝对定位与导航条分离,否则会影响nav宽度，其父为li*/
 .list li .down{width: 150px;background: #333;position:absolute; top: 40px;left: 0; display: none;}
