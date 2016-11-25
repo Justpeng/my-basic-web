@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>滚动条-滚动条方向</title>
+    <script src="../../../js/jquery/jquery.js"></script>
+    <style>
+        *{padding: 0;margin: 0;}
+        .nav{height: 100px;width: 100%;background: rgba(0,0,0,0.5);position: fixed;top:-100px;left: 0;
+            transition:0.3s;
+        }
+        .nav.on{top:0;}
+    </style>
+</head>
+<body>
+<div class="nav ">
+
+</div>
+
+<script>
+    for (var i=0;i<100;i++) {
+        document.write("<h1>" + i + "</h1>");
+
+    }
+
+</script>
+
+<script>
+    $(function () {
+        //不变
+        var top = $(window).scrollTop();
+        $(".nav").addClass("on");
+        $(window).scroll(function () {
+            //一直变 向下变大，向上变小
+            var top2 = $(window).scrollTop();
+            console.log("top:"+top);
+            console.log("top2:"+top2);
+            if(top2>top){//向下滚动
+                $(".nav").removeClass("on");
+            }else{
+                $(".nav").addClass("on");
+            }
+            top = top2;//重新赋值top，否则只有top2=0是才会显示导航栏
+
+        });
+    })
+
+</script>
+</body>
+</html>
