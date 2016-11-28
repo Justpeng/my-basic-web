@@ -20,7 +20,6 @@
 <script>
     for (var i=0;i<100;i++) {
         document.write("<h1>" + i + "</h1>");
-
     }
 
 </script>
@@ -33,8 +32,6 @@
         $(window).scroll(function () {
             //一直变 向下变大，向上变小
             var top2 = $(window).scrollTop();
-            console.log("top:"+top);
-            console.log("top2:"+top2);
             if(top2>top){//向下滚动
                 $(".nav").removeClass("on");
             }else{
