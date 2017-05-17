@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sabre价格计算</title>
+    <script src="jquery.min.js"></script>
+    <style>
+        body{ background:#CFC;}
+
+        *{ padding:0; margin:0;}
+        ul{ list-style:none;text-align:left;}
+        a{ text-decoration:none;}
+
+        div{margin-left:auto;text-align:right;}
+        th{background:#aaaaaa;}
+
+
+    </style>
+    <script>
+        function calculate() {
+
+            var settlePrice = getValueById("settlePrice");
+            var settleTax = getValueById("settleTax");
+            var settleRate = getValueById("settleRate");
+
+
+            var policyPercent = getValueById("policyPercent");
+            var policyPercentRate = getValueById("policyPercentRate");
+
+            var policyDirect = getValueById("policyDirect");
+            var policyDirectRate = getValueById("policyDirectRate");
+
+            var allowPrice = getValueById("allowPrice");
+            var allowPriceRate = getValueById("allowPriceRate");
+
+            var segmentFee = getValueById("segmentFee");
+            var segmentFeeRate = getValueById("segmentFeeRate");
+            var segmentNum = getValueById("segmentNum");
+
+            var calculatePercent = getValueById("calculatePercent");
+            var calculateDirect = getValueById("calculateDirect");
+
+            //成本税
+            var dropTax = settleTax*settleRate;
+            setValue("baseTax", Math.ceil(dropTax));
+
+            //成本票面价= 接口票面价*(1-政策返点)*汇率 - |政策直减值|*汇率 + |开票费|*汇率
+            var baseA = settlePrice*(100-policyPercent)/100*settleRate;
+            var baseB = Math.abs(policyDirect)*policyDirectRate;
+            var baseC;
+
+            var allowType = getValueById("allowCalculateType");
+            if(1==allowType) {
+                baseC =settlePrice*((100+allowPrice)/100)*allowPriceRate;
+            }
+            if(0==allowType) {
+                baseC = Math.abs(allowPrice)*allowPriceRate;
+            }
+
+            var baseFare = baseA - baseB + baseC;
+            setValue("baseFare", Math.ceil(baseFare));
+
+            //投放票面价 = 成本票面价*（1+加减价百分比）+ 加减价固定值 - |航段费*汇率|*航段数
+            var sellA = baseFare*((100+calculatePercent)/100);
+            var sellB = calculateDirect;
+            var sellC = Math.abs(segmentFee*segmentFeeRate)*segmentNum;
+
+            var dropFare = sellA+sellB-sellC;
+            setValue("dropFare",  Math.ceil(dropFare));
+            setValue("dropTotalFare",  Math.ceil(dropFare + dropTax));
+
+
+            //结果;
+       }
+
+       function getById(id) {
+           return document.getElementById(id);
+       }
+
+        function getValueById(id) {
+            var value = document.getElementById(id).value;
+            if(value.length>0) {
+                return parseFloat(value);
+            }else{
+                return 0;
+            }
+        }
+       function setValue(id,value) {
+           return document.getElementById(id).value=value;
+
+       }
+       function getContent(value) {
+           setValue("allowCalculateType", value);
+           calculate();
+       }
+
+
+
+
+    </script>
+</head>
+<body>
+
+    <div class="banner">
+        <input type="hidden" id="allowCalculateType">
+        <table>
+            <tr>
+                <th>接口价格</th>
+            </tr>
+            <tr>
+                <td>接口票面价：</td>
+                <td><input id="settlePrice" onchange="calculate()"></td>
+                <td>汇率：</td>
+                <td><input id="settleRate" onchange="calculate()" value="1"></td>
+                <td>接口票税：</td>
+                <td><input id="settleTax" onchange="calculate()"></td>
+            </tr>
+            <tr>
+                <th>政策</th>
+            </tr>
+            <tr>
+                <td>政策返点%：</td>
+                <td><input id="policyPercent" onchange="calculate()"></td>
+                <td>汇率：</td>
+                <td><input id="policyPercentRate" onchange="calculate()" value="1"></td>
+            </tr>
+            <tr>
+                <td>政策直减值：</td>
+                <td><input id="policyDirect" onchange="calculate()"></td>
+                <td>汇率：</td>
+                <td><input id="policyDirectRate" onchange="calculate()" value="1"></td>
+            </tr>
+            <tr>
+                <td>开票费：</td>
+                <td><input id="allowPrice" onchange="calculate()"></td>
+                <td>汇率：</td>
+                <td><input id="allowPriceRate" onchange="calculate()" value="1"></td>
+                <td>
+                    <select name="allowPriceType" onchange="getContent(this.value)">
+                        <option value="0">直减值</option>
+                        <option value="1">百分比</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>航段费</th>
+            </tr>
+            <tr>
+                <td>航段费值：</td>
+                <td><input id="segmentFee" onchange="calculate()"></td>
+                <td>汇率：</td>
+                <td><input id="segmentFeeRate" onchange="calculate()" value="1"></td>
+                <td>航段数：</td>
+                <td><input id="segmentNum" onchange="calculate()"></td>
+            </tr>
+
+            <tr>
+                <th>加减价</th>
+            </tr>
+            <tr>
+                <td>加减价百分比：</td>
+                <td><input id="calculatePercent" onchange="calculate()"></td>
+                <td>加减价固定值：</td>
+                <td><input id="calculateDirect" onchange="calculate()"></td>
+            </tr>
+
+
+            <tr>
+                <th>计算</th>
+                <td> <button onclick="calculate();">calculate</button>
+                </td>
+            </tr>
+
+            <tr>
+                <th>计算结果</th>
+            </tr>
+
+            <tr>
+                <td>成本票面价：</td>
+                <td><input id="baseFare"></td>
+                <td>成本税：</td>
+                <td><input id="baseTax"></td>
+            </tr>
+            <tr>
+                <td>投放票面价：</td>
+                <td><input id="dropFare" ></td>
+                <td>投放票总价：</td>
+                <td><input id="dropTotalFare"></td>
+            </tr>
+
+        </table>
+    </div>
+
+    <div style="margin-top: 50px;margin-left: 20px;">
+        <p style="text-align: left">计算公式：</p>
+        <ul>
+            <li><a href="#">1，接口价为 GDS返回价格，接口税费为GDS返回税费，接口汇率为GDS返回的币种转换的税率</a></li>
+            <li><a href="#">2，成本票面价= 接口票面价*(1-政策返点)*汇率 - |政策直减值|*汇率 + |开票费|*汇率</a></li>
+            <li><a href="#">3，投放票面价 = 成本票面价*（1+加减价百分比）+ 加减价固定值 - |航段费*汇率|*航段数</a></li>
+            <li><a href="#">4，投放税 = 成本税 = 接口税费*汇率</a></li>
+            <li><a href="#">5，投放总价= 投放票面价+投放税</a></li>
+        </ul>
+    </div>
+</body>
+</html>
